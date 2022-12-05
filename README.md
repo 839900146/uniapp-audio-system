@@ -47,6 +47,9 @@ audio.onCanplay((ev) => {})
 // 监听播放进度
 audio.onTimeUpdate((ev) => {})
 
+// 监听播放改变，参数是新旧params
+audio.onChange((newParams, oldParams) => {})
+
 // 获取歌曲信息（当前时长|总时长|播放状态等）
 (async () => {
   let info = await audio.info('https://xxx.mp3')
@@ -87,6 +90,8 @@ audio.onTimeUpdate((ev: TEventResult) => void)
 audio.onError((ev: any) => void)
 
 audio.onCanplay((ev: TEventResult) => void)
+
+audio.onChange(cb: (newParams?: any, oldParams?: any) => void)
 
 audio.info(audioSrc: string): Promise<TEventResult>
 
