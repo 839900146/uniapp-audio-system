@@ -2,7 +2,9 @@
   "name": "uniapp-audio-system",
   "version": "1.0.2",
   "description": "基于uniapp的音频处理模块，支持在h5、微信小程序控制与处理音频媒体的功能",
-  "main": "audio-system.ts",
+  "main": "dist/audio-system.js",
+  "module": "dist/audio-system.js",
+  "types": "dist/index.d.ts",
   "keywords": ["uni-app", "vue", "h5", "audio"],
   "author": {
     "name": "黄某",
@@ -18,6 +20,5 @@
     "type": "git",
     "url": "https://github.com/839900146/uniapp-audio-system.git"
   },
-  "license": "MIT",
-  "types": "./index.d.ts"
+  "license": "MIT"
 }

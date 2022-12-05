@@ -1,4 +1,4 @@
-import audioSystem from './audio-system'
+import audioSystem from './src/audio-system'
 
 export {}
 
