@@ -1,6 +1,6 @@
 {
   "name": "uniapp-audio-system",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "基于uniapp的音频处理模块，支持在h5、微信小程序控制与处理音频媒体的功能",
   "main": "audio-system.ts",
   "keywords": ["uni-app", "vue", "h5", "audio"],

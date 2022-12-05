@@ -6,6 +6,34 @@
 npm i uniapp-audio-system -S
 ```
 
+## 绑定实例
+在main.ts入口文件中，将插件绑定到Vue实例身上
+```ts
+import audioPlugin from 'uniapp-audio-system/audio-system-plugin'
+
+Vue.use(audioPlugin)
+```
+
+## 导入方式
+
+- 通过 `import` 导入使用
+```ts
+import audio from 'uniapp-audio-system'
+
+audio.play('https://xxx.mp3')
+```
+
+- 通过 `vue实例` 身上调用
+```ts
+export default {
+  methods: {
+    demo() {
+      this.$audioSystem.play('https://xxx.mp3')
+    }
+  }
+}
+```
+
 ## 用法示例
 ```ts
 import audio from 'uniapp-audio-system'
