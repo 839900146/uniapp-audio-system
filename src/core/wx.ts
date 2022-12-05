@@ -1,9 +1,9 @@
 // @ts-nocheck
 class WxAudioSystem {
-	audio!: WechatMiniprogram.InnerAudioContext
+	// #ifdef MP-WEIXIN
+	audio!:  any // WechatMiniprogram.InnerAudioContext 这个傻逼类型会报错
 	tempParams: unknown
 	tempAudioUrl: string
-	// #ifdef MP-WEIXIN
 	constructor() {
 		this.init()
 		this.tempParams = null
