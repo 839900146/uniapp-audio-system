@@ -2,9 +2,11 @@ class H5AudioSystem {
 	// #ifdef H5
 	audio!: HTMLAudioElement
 	tempParams: unknown
+	tempAudioUrl: string
 	constructor() {
 		this.init()
 		this.tempParams = null
+		this.tempAudioUrl = ''
 	}
 
 	private init() {
@@ -12,19 +14,15 @@ class H5AudioSystem {
 	}
 
 	onPlay(cb: (res?: any) => void) {
-		this.audio.onplay = () => {
-			cb(this.eventResult)
-		}
+		this.audio.addEventListener('play', () => cb(this.eventResult))
 	}
 
 	onPause(cb: (res?: any) => void) {
-		this.audio.onpause = () => {
-			cb(this.eventResult)
-		}
+		this.audio.addEventListener('pause', () => cb(this.eventResult))
 	}
 
 	onStop(cb: (res?: any) => void) {
-		this.onPause(cb)
+		this.audio.addEventListener('ended', () => cb(this.eventResult))
 	}
 
 	onError(cb: (res?: any) => void) {
@@ -34,15 +32,16 @@ class H5AudioSystem {
 	}
 
 	onCanplay(cb: (res?: any) => void) {
-		this.audio.oncanplay = () => {
-			cb(this.eventResult)
-		}
+		this.audio.addEventListener('canplay', () => cb(this.eventResult))
 	}
 
 	onTimeUpdate(cb: (res?: any) => void) {
-		this.audio.ontimeupdate = () => {
-			cb(this.eventResult)
-		}
+		this.audio.addEventListener('timeupdate', () => cb(this.eventResult))
+	}
+
+	onChange(cb: (newVal?: any, oldVal?: any) => void) {
+		// @ts-ignore
+		this.audio['__h5__audio__onchange__'] = cb
 	}
 
 	seek(duration: number) {
@@ -50,16 +49,24 @@ class H5AudioSystem {
 	}
 
 	play(audioSrc?: string, params?: unknown) {
+		let prevState = this.audio.paused
+
 		if (!audioSrc || this.audio.src === audioSrc) {
-			if (this.audio.paused) {
-				this.audio.play()
-			} else {
-				this.audio.pause()
+			if (!prevState) {
+				// false代表当前正在播放
+				return this.audio.pause()
 			}
-			return
+		} else {
+			// 能走到这里，带本本次播放的和上次播放的不一样
+			// @ts-ignore
+			this.audio['__h5__audio__onchange__']?.(params, this.tempParams)
+			this.tempParams = params
+			this.audio.src = audioSrc
+			this.tempAudioUrl = audioSrc
 		}
-		this.tempParams = params
-		this.audio.src = audioSrc
+
+		this.pause()
+
 		this.audio.play()
 	}
 
@@ -69,26 +76,30 @@ class H5AudioSystem {
 
 	stop() {
 		this.pause()
+		this.audio.src = ''
 	}
 
 	async info(audioSrc: string) {
+		let isPlaying = this.audio.paused
 		return new Promise((resolve) => {
-			let watch = () => {
+			let timer = setInterval(() => {
 				if ((this?.eventResult?.duration || -1) >= 0) {
+					clearInterval(timer)
 					resolve(this.eventResult)
-					// 重置audio
-					this.audio.removeEventListener('timeupdate', watch)
 					this.audio.pause()
 					this.audio.volume = 1
-					this.audio.src = ''
+					this.audio.src = this.tempAudioUrl
+					this.audio.muted = false
+					if (!isPlaying) {
+						this.audio.play()
+					}
 				}
-			}
-			this.audio.volume = 0
-			setTimeout(() => {
-				this.play(audioSrc)
-				this.audio.addEventListener('timeupdate', watch)
-				this.audio.ontimeupdate = watch
 			}, 150)
+
+			this.audio.pause()
+			this.audio.muted = true
+			this.audio.src = audioSrc
+			this.audio.play()
 		})
 	}
 
