@@ -1,7 +1,7 @@
 // @ts-nocheck
 class WxAudioSystem {
 	// #ifdef MP-WEIXIN
-	audio!:  any // WechatMiniprogram.InnerAudioContext 这个傻逼类型会报错
+	audio!: any // WechatMiniprogram.InnerAudioContext 这个傻逼类型会报错
 	tempParams: unknown
 	tempAudioUrl: string
 	constructor() {
@@ -52,7 +52,7 @@ class WxAudioSystem {
 
 	onChange(cb: (newVal?: any, oldVal?: any) => void) {
 		// @ts-ignore
-		
+
 		this.audio['__wx__audio__onchange__'] = cb
 	}
 
@@ -70,6 +70,8 @@ class WxAudioSystem {
 			}
 		} else {
 			// 能走到这里，带本本次播放的和上次播放的不一样
+			this.audio?.destroy()
+			this.init()
 			// @ts-ignore
 			this.audio['__wx__audio__onchange__']?.(params, this.tempParams)
 			this.tempParams = params
@@ -96,11 +98,12 @@ class WxAudioSystem {
 			this.play(audioSrc)
 			let timer = setInterval(() => {
 				if ((this?.eventResult?.duration || -1) >= 0) {
-					resolve(this.eventResult)
+					clearInterval(timer)
+					let result = { ...this.eventResult }
+					resolve(result)
 					this.audio.stop()
 					this.audio.volume = 1
 					this.audio.src = ''
-					clearInterval(timer)
 				}
 			}, 150)
 		})
